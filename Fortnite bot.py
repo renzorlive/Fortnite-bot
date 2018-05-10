@@ -5,9 +5,6 @@ import asyncio
 import time
 from pfaw import Fortnite, Platform
 
-# fortnite example variables
-#stats = fortnite.battle_royale_stats(username='silver_0_wins', platform=Platform.pc)
-#kpm = stats.solo.kills / stats.solo.matches
 
 # TODO check if stats update, otherwise delete this and use the function getFortniteData instead
 try:
@@ -28,9 +25,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    userID = message.author.id
+    words = message.content.split(" ") # list of words in message
+    
+    # fortnite kills command
     if message.content.startswith('!kills'):
-        userID = message.author.id
-        words = message.content.split(" ") # list of words in message
         mode = words[1]
         username = words[2]
 
@@ -46,18 +45,25 @@ async def on_message(message):
             print(errorMsg)
             await client.send_message(message.channel, errorMsg)
             return
-            
-        if mode == "solo":
-            kills = stats.solo.kills
-        else:
-            kills = "placeholder TODO"
         
+        # prepare appropriate data
+        if mode == 'all':
+            kills = stats.all.kills
+        elif mode == "solo":
+            kills = stats.solo.kills
+        elif mode == 'duo':
+            kills = stats.duo.kills
+        elif mode == 'squad':
+            kills = stats.squad.kills
+        
+        # prepare response message
         responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " kills in solo"
         
+        # send message to discord
         await client.send_message(message.channel, responseMessage)
         
         # TODO sending the time for debugging
-        await client.send_message(message.channel, str(dt) + "s") 
+        await client.send_message(message.channel, "debug: request compleated in " + str(dt) + " s") 
 
 
 
