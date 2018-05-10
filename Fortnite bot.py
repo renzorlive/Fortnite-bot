@@ -158,7 +158,6 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
 
 
-    # fortnite winrate command... TODO
     elif message.content.startswith('!winrate'):
         # if no parameters specified... error
         if len(words) == 1:
@@ -242,7 +241,8 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + random.choice(serversAreUpResponses))
         else:
             await client.send_message(message.channel, mentionPrefix + random.choice(serversAreDownResponses))
-                        
+    
+    # TODO if the message doesn't fall into any of the above, try to analyze the topic
 
 
 # helpers            
@@ -358,7 +358,7 @@ def getArgs(words):
         # determine specified parameters
     if isMode(words[1]):
         if len(words) == 2:
-            print('no username provided') # TODO
+            print('no username provided')
             return False
         mode = words[1]
         username = words[2]
