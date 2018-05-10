@@ -68,6 +68,8 @@ async def on_message(message):
 
 
 # helpers
+
+# NOT USED
 # TODO check if stats update, if not, use this function to get data every time it's needed
 def getFortniteData():
     fortnite = Fortnite(fortnite_token='ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=',
