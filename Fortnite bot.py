@@ -42,23 +42,40 @@ async def on_message(message):
     
     # fortnite kills command
     if message.content.startswith('!kills'):
-        mode = words[1]
-        username = words[2]
+        mode = 'no mode specified' # initial assumption
+        # determine specified parameters
+        if words[1] == 'all' or words[1] == 'solo' or words[1] == 'duo' or words[1] == 'squad':
+            mode = words[1]
+            username = words[2]
+        else:
+            username = words[1]
 
-        # try to get response from Fortnite API
+        # try to get response from Fortnite API for username
         try:
-            # TODO counting the time until stats are retrieved for debugging purpuses
-            t1 = time.time() 
-            #fortnite = getFortniteData(); # TOO check if stats update, otherwise use the function
             stats = fortnite.battle_royale_stats(username=username, platform=Platform.pc)
-            dt = time.time() - t1 # TODO debugging delta time before and after the stats retrieval
         except:
             errorMsg = "error: user not found or servers are down, please try again"
             print(errorMsg)
             await client.send_message(message.channel, errorMsg)
             return
         
-        # prepare appropriate data
+        # if no mode was specified, showing data for all modes...
+        if mode == 'no mode specified':
+            # prepare data
+            killsall = stats.all.kills
+            killssolo = stats.solo.kills
+            killsduo = stats.duo.kills
+            killssquad = stats.squad.kills
+            # prepare response
+            responseMessage = ("<@"+userID+"> "+username+": "+str(killsall)+" all kills; "+
+                              str(killssolo)+" solo kills; "+ str(killsduo)+" duo kills; "+
+                              str(killssquad)+" squad kills")
+            # send response to discord
+            await client.send_message(message.channel, responseMessage)
+            return # stop
+        
+        
+        # if mode was specified, prepare the appropriate data
         if mode == 'all':
             kills = stats.all.kills
         elif mode == "solo":
@@ -67,26 +84,11 @@ async def on_message(message):
             kills = stats.duo.kills
         elif mode == 'squad':
             kills = stats.squad.kills
-        
         # prepare response message
         responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " " + mode + " kills"
-        
-        # send message to discord
+        # send response to discord
         await client.send_message(message.channel, responseMessage)
-        
-        # TODO sending the time for debugging
-        await client.send_message(message.channel, "debug: request compleated in " + str(dt) + " s") 
 
-
-# helpers
-
-# NOT USED
-# TODO check if stats update, if not, use this function to get data every time it's needed
-def getFortniteData():
-    fortnite = Fortnite(fortnite_token=fortniteToken,
-                        launcher_token=launcherToken,
-                        password=fortnitePassword, email=fortniteEmail)
-    return fortnite
 
 
 
