@@ -155,7 +155,7 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
 
 
-    # fortnite winrate command...
+    # fortnite winrate command... TODO
     elif message.content.startswith('!winrate'):
         # if no parameters specified... error
         if len(words) == 1:
@@ -281,7 +281,7 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             dataall = stats.all.wins / stats.all.matches * 100
             datasolo = stats.solo.wins / stats.solo.matches * 100
             dataduo = stats.duo.wins / stats.duo.matches * 100
-            datasquad = stats.squad.wins / stats.squad * 100
+            datasquad = stats.squad.wins / stats.squad.matches * 100
         elif stat == 'kpm':
             dataall = stats.all.kills / stats.all.matches
             datasolo = stats.solo.kills / stats.solo.matches
@@ -289,9 +289,9 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             datasquad = stats.squad.kills / stats.squad.matches
             
         # prepare response
-        responseMessage = ("<@"+userID+"> "+username+": "+str(dataall)+" all kills; "+
-                          str(datasolo)+" solo kills; "+ str(dataduo)+" duo kills; "+
-                          str(datasquad)+" squad kills")
+        responseMessage = ("<@"+userID+"> "+username+": "+str(dataall)+" all " + stat + "; "+
+                          str(datasolo)+" solo " + stat + "; "+ str(dataduo)+" duo " + stat + "; "+
+                          str(datasquad)+" squad " + stat)
         return responseMessage
     
     # if mode was specified, prepare the appropriate data

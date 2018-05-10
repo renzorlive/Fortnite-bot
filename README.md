@@ -30,3 +30,4 @@ Donations: https://www.paypal.me/fsil
 - Added server status commands, added some natural interaction with bot, you can now ask about the servers status
 - Added mentions to bot response
 - Improved code readability; updated error messages
+- Fixed bot responses for given stat; e.g. !wins username would return username: someNumber mode kills; ...
