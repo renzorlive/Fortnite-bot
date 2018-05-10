@@ -50,7 +50,7 @@ async def on_message(message):
         mode = 'no mode specified' # initial assumption
         # determine specified parameters
         if isMode(words[1]):
-            print('isword') # TODO
+            print('is mode') # TODO
             if len(words) == 2:
                 print('no username provided') # TODO
                 await client.send_message(message.channel, 'error: please specify an username')
@@ -73,36 +73,46 @@ async def on_message(message):
         
         # if no mode was specified, showing data for all modes...
         if mode == 'no mode specified':
-            # prepare data
-            killsall = stats.all.kills
-            killssolo = stats.solo.kills
-            killsduo = stats.duo.kills
-            killssquad = stats.squad.kills
-            # prepare response
-            responseMessage = ("<@"+userID+"> "+username+": "+str(killsall)+" all kills; "+
-                              str(killssolo)+" solo kills; "+ str(killsduo)+" duo kills; "+
-                              str(killssquad)+" squad kills")
+            responseMessage = killsCommand(mode, stats, message, userID, username)
             # send response to discord
             await client.send_message(message.channel, responseMessage)
             return # stop
         
         
-        # if mode was specified, prepare the appropriate data
-        if mode == 'all':
-            kills = stats.all.kills
-        elif mode == "solo":
-            kills = stats.solo.kills
-        elif mode == 'duo':
-            kills = stats.duo.kills
-        elif mode == 'squad':
-            kills = stats.squad.kills
         # prepare response message
-        responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " " + mode + " kills"
+        responseMessage = killsCommand(mode, stats, message, userID, username)
         # send response to discord
         await client.send_message(message.channel, responseMessage)
 
 
 # helpers
+def killsCommand(mode, stats, message, userID, username):
+    # if no mode was specified, showing data for all modes...
+    if mode == 'no mode specified':
+        # prepare data
+        killsall = stats.all.kills
+        killssolo = stats.solo.kills
+        killsduo = stats.duo.kills
+        killssquad = stats.squad.kills
+        # prepare response
+        responseMessage = ("<@"+userID+"> "+username+": "+str(killsall)+" all kills; "+
+                          str(killssolo)+" solo kills; "+ str(killsduo)+" duo kills; "+
+                          str(killssquad)+" squad kills")
+        return responseMessage
+    
+    # if mode was specified, prepare the appropriate data
+    if mode == 'all':
+        kills = stats.all.kills
+    elif mode == "solo":
+        kills = stats.solo.kills
+    elif mode == 'duo':
+        kills = stats.duo.kills
+    elif mode == 'squad':
+        kills = stats.squad.kills
+    # prepare response message
+    responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " " + mode + " kills"
+    return responseMessage
+    
 def isMode(word):
     return (word == 'all' or word == 'solo' or word == 'duo' or word == 'squad')
 
