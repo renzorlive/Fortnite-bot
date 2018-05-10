@@ -59,6 +59,8 @@ async def on_message(message):
             username = words[2]
         else:
             username = words[1]
+            if len(words) >= 3 and isMode(words[2]):
+                mode = words[2]
 
         # try to get response from Fortnite API for username
         try:
