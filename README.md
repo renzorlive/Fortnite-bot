@@ -13,7 +13,7 @@ Donations: https://www.paypal.me/fsil
 
 **same pattern as above works for: kills, wins, matches, winrate, kpm**
 
-**server; servers; status (displays the status of fortnite servers)**
+**!server; !servers; !status (displays the status of fortnite servers)**
 
 **you can ask the bot about the servers status as so: is fortnite up ?; are fortnite servers up ?; fortnite up ?; are servers up ?; not case sensitive**
 
