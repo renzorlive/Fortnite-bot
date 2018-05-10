@@ -58,11 +58,13 @@ async def on_message(message):
     if message.content.startswith('!kills'):
         # if no parameters specified... error
         if len(words) == 1:
+            print(errorSpecifyUsername)
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         
         args = getArgs(words)
         if args == False:
+            print(errorSpecifyUsername)
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         else:
@@ -77,14 +79,14 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
         
-        # if no mode was specified, showing data for all modes...
+        # if no mode was not specified, showing data for all modes...
         if mode == 'no mode specified':
             responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kills')
             # send response to discord
             await client.send_message(message.channel, responseMessage)
             return # stop
         
-        # prepare response message
+        # if mode was specified... prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kills')
         # send response to discord
         await client.send_message(message.channel, responseMessage)
