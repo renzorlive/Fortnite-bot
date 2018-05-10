@@ -11,6 +11,9 @@ Donations: https://www.paypal.me/fsil
 
 **!kills username** (by ommiting the mode, bot shows data from all modes for username)
 
+**same pattern as above works for: kills, wins, matches, winrate, kpm**
+
+
 
 # Changelog 
 **10-may-18**
@@ -20,3 +23,4 @@ Donations: https://www.paypal.me/fsil
 - Added more error handling
 - Added more flexibility to commands logic
 - Simplified code readability
+- Added the rest of the stats commands, kills, wins, matches, winrate, kpm; improved code logic and readability
