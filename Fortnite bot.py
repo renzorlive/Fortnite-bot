@@ -42,9 +42,19 @@ async def on_message(message):
     
     # fortnite kills command
     if message.content.startswith('!kills'):
+        # if no parameters specified... error
+        if len(words) == 1:
+            await client.send_message(message.channel, 'error: please specify at least an username')
+            return
+        
         mode = 'no mode specified' # initial assumption
         # determine specified parameters
-        if words[1] == 'all' or words[1] == 'solo' or words[1] == 'duo' or words[1] == 'squad':
+        if isMode(words[1]):
+            print('isword') # TODO
+            if len(words) == 2:
+                print('no username provided') # TODO
+                await client.send_message(message.channel, 'error: please specify an username')
+                return
             mode = words[1]
             username = words[2]
         else:
@@ -90,6 +100,8 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
 
 
-
+# helpers
+def isMode(word):
+    return (word == 'all' or word == 'solo' or word == 'duo' or word == 'squad')
 
 client.run(discordBotToken)

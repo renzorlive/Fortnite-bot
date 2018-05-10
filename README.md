@@ -15,3 +15,4 @@ Donations: https://www.paypal.me/fsil
 - Added error handling for data retrieval, the bot will now notify you if errors occur.
 - Added settings.txt to store critical data outside the code
 - Added flexible command, can now ommit the mode
+- Added more error handling
