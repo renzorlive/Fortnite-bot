@@ -3,8 +3,8 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
 from pfaw import Fortnite, Platform
-import time
 import random
+
 
 # constants
 serverStatusUpMessage = "Servers are UP"
@@ -16,6 +16,9 @@ serversAreDownResponses = ['No', 'no', 'Nope', 'nope', 'nope, sorry', 'not at th
 # errors
 errorSpecifyUsername = 'error: please specify an username'
 errorNotFound = "error: user not found or servers are down, please try again"
+
+decimalsShown = 3
+
 
 # collect required data from file settings.txt
 with open("settings.txt", encoding="utf-8") as file:
@@ -239,10 +242,10 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + random.choice(serversAreUpResponses))
         else:
             await client.send_message(message.channel, mentionPrefix + random.choice(serversAreDownResponses))
+                        
 
 
-
-# helpers
+# helpers            
 def askingAboutFortniteServersStatus(message):
     messageContent = message.content.lower()
     return (messageContent.startswith('is fortnite up?') or
@@ -288,10 +291,12 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             dataduo = stats.duo.kills / stats.duo.matches
             datasquad = stats.squad.kills / stats.squad.matches
             
-        # prepare response
-        responseMessage = ("<@"+userID+"> "+username+": "+str(dataall)+" all " + stat + "; "+
-                          str(datasolo)+" solo " + stat + "; "+ str(dataduo)+" duo " + stat + "; "+
-                          str(datasquad)+" squad " + stat)
+        # prepare response for when mode is not specified
+        responseMessage = ("<@"+userID+"> "+username+": "+
+                           str(round(dataall, decimalsShown))+" all "+stat+"; "+
+                           str(round(datasolo, decimalsShown))+" solo "+stat+"; "+ 
+                           str(round(dataduo, decimalsShown))+" duo "+stat+"; "+
+                           str(round(datasquad, decimalsShown))+" squad "+stat)
         return responseMessage
     
     # if mode was specified, prepare the appropriate data
@@ -343,8 +348,9 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
         elif stat == 'kpm':
             data = stats.squad.kills / stats.squad.matches
             
-    # prepare response message
-    responseMessage =  "<@" + userID + "> " + username + ": " + str(data) + " " + mode + " kills"
+    # prepare response message for when mode is specified
+    responseMessage =  ("<@"+userID+"> "+username+": "+
+                        str(round(data, decimalsShown))+" "+mode+" "+stat)
     return responseMessage
 
 def getArgs(words):
