@@ -5,16 +5,17 @@ import asyncio
 import time
 from pfaw import Fortnite, Platform
 
-# TODO hide personal infromation in file that is gitignored
 
 # collect data from file settings.txt
 with open("settings.txt", encoding="utf-8") as file:
     dataLines = [line.strip() for line in file]
+# prepare required data for setup
 fortniteToken = dataLines[0]
 launcherToken = dataLines[1]
 fortnitePassword = dataLines[2]
 fortniteEmail = dataLines[3]
 discordBotToken = dataLines[4]
+
 
 # TODO check if stats update, otherwise delete this and use the function getFortniteData instead
 try:
@@ -23,6 +24,7 @@ try:
                         password=fortnitePassword, email=fortniteEmail)
 except:
     print("an error has occured while trying to initialize Fortnite class")
+
 
 # discord bot setup
 Client = discord.Client()
@@ -67,15 +69,13 @@ async def on_message(message):
             kills = stats.squad.kills
         
         # prepare response message
-        responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " kills in solo"
+        responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " kills in " + mode
         
         # send message to discord
         await client.send_message(message.channel, responseMessage)
         
         # TODO sending the time for debugging
         await client.send_message(message.channel, "debug: request compleated in " + str(dt) + " s") 
-        # TODO other debugging lines
-        #await client.send_message(message.channel, dataLines[0]) 
 
 
 # helpers
