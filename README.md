@@ -13,6 +13,9 @@ Donations: https://www.paypal.me/fsil
 
 **same pattern as above works for: kills, wins, matches, winrate, kpm**
 
+**server; servers; status (displays the status of fortnite servers)**
+
+**you can ask the bot about the servers status as so: is fortnite up ?; are fortnite servers up ?; fortnite up ?; are servers up ?; not case sensitive**
 
 
 # Changelog 
@@ -24,3 +27,6 @@ Donations: https://www.paypal.me/fsil
 - Added more flexibility to commands logic
 - Simplified code readability
 - Added the rest of the stats commands, kills, wins, matches, winrate, kpm; improved code logic and readability
+- Added server status commands, added some natural interaction with bot, you can now ask about the servers status
+- Added mentions to bot response
+- Improved code readability; updated error messages
