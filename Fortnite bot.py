@@ -5,12 +5,22 @@ import asyncio
 import time
 from pfaw import Fortnite, Platform
 
+# TODO hide personal infromation in file that is gitignored
+
+# collect data from file settings.txt
+with open("settings.txt", encoding="utf-8") as file:
+    dataLines = [line.strip() for line in file]
+fortniteToken = dataLines[0]
+launcherToken = dataLines[1]
+fortnitePassword = dataLines[2]
+fortniteEmail = dataLines[3]
+discordBotToken = dataLines[4]
 
 # TODO check if stats update, otherwise delete this and use the function getFortniteData instead
 try:
-    fortnite = Fortnite(fortnite_token='ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=',
-                        launcher_token='MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=',
-                        password='SILVER@kerokero955', email='silvermirai@yahoo.com')
+    fortnite = Fortnite(fortnite_token=fortniteToken,
+                        launcher_token=launcherToken,
+                        password=fortnitePassword, email=fortniteEmail)
 except:
     print("an error has occured while trying to initialize Fortnite class")
 
@@ -64,7 +74,8 @@ async def on_message(message):
         
         # TODO sending the time for debugging
         await client.send_message(message.channel, "debug: request compleated in " + str(dt) + " s") 
-
+        # TODO other debugging lines
+        #await client.send_message(message.channel, dataLines[0]) 
 
 
 # helpers
@@ -72,11 +83,11 @@ async def on_message(message):
 # NOT USED
 # TODO check if stats update, if not, use this function to get data every time it's needed
 def getFortniteData():
-    fortnite = Fortnite(fortnite_token='ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=',
-                launcher_token='MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=',
-                password='SILVER@kerokero955', email='silvermirai@yahoo.com')
+    fortnite = Fortnite(fortnite_token=fortniteToken,
+                        launcher_token=launcherToken,
+                        password=fortnitePassword, email=fortniteEmail)
     return fortnite
 
 
 
-client.run("NDQzOTQ1MTgwOTY2NjgyNjM0.DdUxDw.REPTZrzUAvmjhex7x9xHKrBXd-E")
+client.run(discordBotToken)
