@@ -10,9 +10,12 @@ from pfaw import Fortnite, Platform
 #kpm = stats.solo.kills / stats.solo.matches
 
 # TODO check if stats update, otherwise delete this and use the function getFortniteData instead
-fortnite = Fortnite(fortnite_token='ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=',
-                launcher_token='MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=',
-                password='SILVER@kerokero955', email='silvermirai@yahoo.com')
+try:
+    fortnite = Fortnite(fortnite_token='ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=',
+                        launcher_token='MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=',
+                        password='SILVER@kerokero955', email='silvermirai@yahoo.com')
+except:
+    print("an error has occured while trying to initialize Fortnite class")
 
 # discord bot setup
 Client = discord.Client()
@@ -38,8 +41,10 @@ async def on_message(message):
             #fortnite = getFortniteData(); # TOO check if stats update, otherwise use the function
             stats = fortnite.battle_royale_stats(username=username, platform=Platform.pc)
             dt = time.time() - t1 # TODO debugging delta time before and after the stats retrieval
-        except ValueError:
-            await client.send_message(message.channel, "error: user not found or servers are down")
+        except:
+            errorMsg = "error: user not found or servers are down, please try again"
+            print(errorMsg)
+            await client.send_message(message.channel, errorMsg)
             return
             
         if mode == "solo":
