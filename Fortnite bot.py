@@ -69,7 +69,7 @@ async def on_message(message):
             kills = stats.squad.kills
         
         # prepare response message
-        responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " kills in " + mode
+        responseMessage =  "<@" + userID + "> " + username + ": " + str(kills) + " " + mode + " kills"
         
         # send message to discord
         await client.send_message(message.channel, responseMessage)
