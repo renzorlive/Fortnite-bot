@@ -1,8 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; 
-; Fortnite servers status related words
 ;
-; This file contains a list of words denoting the topic is about fortnite servers.
+; List of words related to the topic: fortnite.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -42,3 +40,5 @@ ftn
 ftn?
 serv
 serv?
+joaca
+joaca?
