@@ -41,3 +41,4 @@ Donations: https://www.paypal.me/fsil
 - Cleaned up code, removed redudant commands, now relying on natural language alanysis (but not all commands removed yet)
 - Cleaned up code, improved natural language analysis
 - Improved natural language scoring
+- Added more data for natural language analysis
