@@ -1,0 +1,36 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+; Fortnite servers status related words
+;
+; This file contains a list of words denoting the topic is about fortnite servers.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+fortnite
+fortnite?
+fort
+fort?
+server
+server?
+servers
+servers?
+joci
+joci?
+dai
+dai?
+merg
+merg?
+merge
+merge?
+serverele
+serverele?
+serveru
+serveru?
+serverul
+serverul?
+up
+up?
+down
+down?
+on
+on?

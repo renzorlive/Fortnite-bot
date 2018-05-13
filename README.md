@@ -32,4 +32,7 @@ Donations: https://www.paypal.me/fsil
 - Improved code readability; updated error messages
 - Fixed bot responses for given stat; e.g. !wins username would return username: someNumber mode kills; ...
 - Added demimal rounding to 3 decimals to bot responses
-- Updated logging
+- Updated error logging
+
+**13-may-18**
+- Fixed token timeout issue, bot will now work indefinetly

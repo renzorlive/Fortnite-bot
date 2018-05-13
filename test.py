@@ -4,6 +4,10 @@ from discord.ext import commands
 from pfaw import Fortnite, Platform
 import random
 import inspect
+import sys
+import os
+
+from analyzer import Analyzer
 
 
 # constants
@@ -22,6 +26,9 @@ errorSpecifyUsername = 'error: please specify an username'
 errorNotFound = "error: user not found or servers are down, please try again"
 
 decimalsShown = 3
+
+fortniteServerStatusRelatedWords = os.path.join(sys.path[0], "fortnite-servers-related.txt")
+fortniteServerStatusNonRelatedWords = os.path.join(sys.path[0], "fortnite-servers-non-related.txt")
 
 
 # collect required data from file settings.txt
@@ -263,7 +270,7 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + random.choice(serversAreDownResponses))
     
     # TODO if the message doesn't fall into any of the above, try to analyze the topic
-    elif(isTopicFortnite(message)):
+    elif(isTopicFortnite(message, mentionPrefix)):
         status = fortnite.server_status()
         if status:
             await client.send_message(message.channel, mentionPrefix + random.choice(fortniteTopicServerUpResponses))
@@ -271,9 +278,21 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + random.choice(fortniteTopicServerDownResponses))
 
 
-# experimental function TODO
-def isTopicFortnite(message):
-    return(('fortnite' in message.content.lower()) and message.author.id != botID)
+# analyze topic with NLTK experimental function TODO
+def isTopicFortnite(message, mentionPrefix):
+    # if message is from bot, ignore
+    if message.author.id == botID:
+        return False
+    
+    # initialize analyzer
+    analyzer = Analyzer(fortniteServerStatusRelatedWords, fortniteServerStatusNonRelatedWords)
+    if not analyzer:
+        print('error trying to initialize Analyzer', 'line:', lineno())
+        client.send_message(message.channel, mentionPrefix + ' error while trying to initialize Analyzer line: ' + str(lineno()))
+        return False
+    
+    score = analyzer.analyze(message.content)
+    return score >= 2
 
 # helpers            
 def isAskingServerStatusUp(message):
