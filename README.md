@@ -36,3 +36,6 @@ Donations: https://www.paypal.me/fsil
 
 **13-may-18**
 - Fixed token timeout issue, bot will now work indefinetly
+- Added natural language analysis
+- Cleaned up code, removed redudant commands, now relying on natural language alanysis (but not all commands removed yet)
+- Cleaned up code, improved natural language analysis

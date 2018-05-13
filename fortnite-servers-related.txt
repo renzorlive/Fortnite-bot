@@ -34,3 +34,11 @@ down
 down?
 on
 on?
+play
+play?
+joc
+joc?
+ftn
+ftn?
+serv
+serv?

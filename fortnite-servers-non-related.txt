@@ -1,22 +1,52 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-; Fortnite servers down questions related words
-;
-; This file contains a list of words used to ask about fortnite servers being down.
-;
-; Used to determine if message asks about fortnite servers being down.
+; List of words non-related to the topic: fortnite.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 dota
+dota?
 overwatch
+overwatch?
 cs
+cs?
 csgo
+csgo?
 counter-strike
+counter-strike?
 steam
+steam?
 bot
+bot?
 youtube
+youtube?
 windows
+windows?
 window
+window?
 twitch
+twitch?
 twitch-ul
+twitch-ul?
+cryptocurency
+cryptocurency?
+car
+cars?
+gps
+gps?
+crtypo
+crtypo?
+nasa
+nasa?
+android
+android?
+ios
+ios?
+mobile
+mobile?
+mobil
+mobil?
+pc
+pc?
+microsoft
+microsoft?

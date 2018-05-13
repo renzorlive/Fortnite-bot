@@ -4,27 +4,46 @@ from discord.ext import commands
 from pfaw import Fortnite, Platform
 import random
 import inspect
+import sys
+import os
+
+from analyzer import Analyzer
 
 
 # constants
 botID = '443945180966682634' # bot ID on discord, used to prevent infinite topic loop
+# responses for explicit !server or !status commands
 serverStatusUpMessage = "Servers are UP"
 serverStatusDownMessage = "Servers are DOWN"
-serversAreUpResponses = ['Yup', 'Yes', 'Yeah', 'yes', 'yeah', 'up it is', 'very much so',
-                         'servers are up and running']
-serversAreDownResponses = ['No', 'no', 'Nope', 'nope', 'nope, sorry', 'not at the moment',
-                           'no', 'not at the moment', 'no, servers are down',]
-fortniteTopicServerUpResponses = ['Fortnite is up btw', 'Fortnite is up, in case you wondered'] # TODO add more responses
-fortniteTopicServerDownResponses = ["Fortnite is down btw", "Fortnite is down, in case you wondered"]
 
-# errors
+# topic analysis: fortnite -> responses for server status up
+fortniteServerStatusUp = ['fortnite is up', 'fortnite servers are up', "fortnite is up and running",
+                          "servers are up", "servers up and running", "servers up",
+                          "servers alive and kicking", "fortnite servers are good to go"]
+
+# topic analysis: fortnite -> responses for server status down
+fortniteServerStatusDown = ["fornite is down", "fortnite servers are up",
+                                    "servers are down", "servers down", "servers are no go",
+                                    "fortnite servers are down cold", "servers are sick with the flu"]
+# end of sentences to make the responses more natural
+endOfSentence = [', in case you were wondering', ', thought you might wanna know', ' btw',
+                 ' for the record ', ' or so it seems', ', at least for now', ' atm',
+                 ' at the moment', ' by the way']
+
+# errors messages
 errorSpecifyUsername = 'error: please specify an username'
 errorNotFound = "error: user not found or servers are down, please try again"
+errorInitializingFortnite = "an error has occured while trying to initialize Fortnite class"
 
-decimalsShown = 3
+decimalsShown = 3 # as in the statistics
+
+# list of words related to the topic: fortnite
+fortniteServerStatusRelatedWords = os.path.join(sys.path[0], "fortnite-servers-related.txt")
+# list of words non-related to the topic: fortnite
+fortniteServerStatusNonRelatedWords = os.path.join(sys.path[0], "fortnite-servers-non-related.txt")
 
 
-# collect required data from file settings.txt
+# collect required data for Fortnite class initialization from file settings.txt
 with open("settings.txt", encoding="utf-8") as file:
     dataLines = [line.strip() for line in file]
 # prepare required data for setup
@@ -33,54 +52,56 @@ launcherToken = dataLines[1]
 fortnitePassword = dataLines[2]
 fortniteEmail = dataLines[3]
 discordBotToken = dataLines[4]
-
-# initialization of fortnite class
+# initial initialization of fortnite class
 try:
     fortnite = Fortnite(fortnite_token=fortniteToken,
                         launcher_token=launcherToken,
                         password=fortnitePassword, email=fortniteEmail)
 except:
-    print("an error has occured while trying to initialize Fortnite class")
+    print(errorInitializingFortnite)
 
 
 # discord bot setup
 Client = discord.Client()
 client = commands.Bot(command_prefix = "`")
 
-
+# on start...
 @client.event
 async def on_ready():
     print("Fortnite Bot is ready")
 
-
+# on discord message...
 @client.event
 async def on_message(message):
-    userID = message.author.id
+    userID = message.author.id # discord ID of whoever wrote the message
     words = message.content.split(" ") # list of words in discord message
-    mentionPrefix = "<@" + userID + "> " # mention prefix
+    mentionPrefix = "<@" + userID + "> "
     
-    # TODO
+    # reinitializing class to prevent token expiration TODO maybe find a better way like time driven
     fortnite = Fortnite(fortnite_token = fortniteToken, launcher_token=launcherToken,
                                          password=fortnitePassword, email=fortniteEmail)
     
-    #  fortnite kills command...
+    
+    #  fortnite kills command handler...
     if message.content.startswith('!kills'):
-        # if no parameters specified... error
+        # if no parameters specified... display error
         if len(words) == 1:
             print(errorSpecifyUsername, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
-        
-        args = getArgs(words)
+    
+        # determine mode and username
+        args = getArgs(words) # arguments passed in the message
+        # if no username was specified, display error
         if args == False:
             print(errorSpecifyUsername, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         else:
-            mode = args[0]
+            mode = args[0] # can be "no mode specified" if no mode was specified
             username = args[1]
 
-        # try to get response from Fortnite API for username
+        # get stats from Fortnite API for username
         try:
             stats = fortnite.battle_royale_stats(username=username, platform=Platform.pc)
         except:
@@ -100,6 +121,7 @@ async def on_message(message):
         # send response to discord
         await client.send_message(message.channel, responseMessage)
     
+    
     # fortnite wins command handler...
     elif message.content.startswith('!wins'):
         # if no parameters specified... error
@@ -108,7 +130,8 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         
-        args = getArgs(words)
+        # determine mode and username
+        args = getArgs(words) # arguments passed in the message
         if args == False:
             print(errorSpecifyUsername, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
@@ -144,6 +167,7 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         
+        # determine mode and username
         args = getArgs(words)
         if args == False:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -181,6 +205,7 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         
+        # determine mode and username
         args = getArgs(words)
         if args == False:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -217,6 +242,7 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
             return
         
+        # determine mode and username
         args = getArgs(words)
         if args == False:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -254,44 +280,80 @@ async def on_message(message):
         else:
             await client.send_message(message.channel, mentionPrefix + serverStatusDownMessage)
     
-    # TODO experimental natural interaction TODO maybe make topic analyzer
-    elif(isAskingServerStatusUp(message)):
+    # natural language topic analyses (non explicit commands, analyzing normal converstion)
+    # analyze topic, if it's about fortnite, respond with server status in a somewhat natural way
+    elif(isTopicFortnite(message, mentionPrefix)):
         status = fortnite.server_status()
         if status:
-            await client.send_message(message.channel, mentionPrefix + random.choice(serversAreUpResponses))
+            await client.send_message(message.channel, (mentionPrefix+
+                                                        random.choice(fortniteServerStatusUp)+
+                                                        random.choice(endOfSentence)))
         else:
-            await client.send_message(message.channel, mentionPrefix + random.choice(serversAreDownResponses))
+            await client.send_message(message.channel, (mentionPrefix+
+                                                        random.choice(fortniteServerStatusDown)+
+                                                        random.choice(endOfSentence)))
+
+
+
+# natural language analyses
+def isTopicFortnite(message, mentionPrefix):
+    """
+    message: object; mentionPrefix: string
+    returns bool
+    Analyzes sentence and returns true if topic is about fortnite, false otherwise
+    """
+    # if message is from bot, ignore
+    if message.author.id == botID:
+        return False
     
-    # TODO if the message doesn't fall into any of the above, try to analyze the topic
-    elif(isTopicFortnite(message)):
-        status = fortnite.server_status()
-        if status:
-            await client.send_message(message.channel, mentionPrefix + random.choice(fortniteTopicServerUpResponses))
-        else:
-            await client.send_message(message.channel, mentionPrefix + random.choice(fortniteTopicServerDownResponses))
+    # initialize analyzer
+    analyzer = Analyzer(fortniteServerStatusRelatedWords, fortniteServerStatusNonRelatedWords)
+    if not analyzer:
+        print('error trying to initialize Analyzer', 'line:', lineno())
+        client.send_message(message.channel, mentionPrefix + ' error while trying to initialize Analyzer line: ' + str(lineno()))
+        return False
+    
+    score = analyzer.analyze(message.content)
+    return score >= 2
 
 
-# experimental function TODO
-def isTopicFortnite(message):
-    return(('fortnite' in message.content.lower()) and message.author.id != botID)
 
-# helpers            
-def isAskingServerStatusUp(message):
-    messageContent = message.content.lower()
-    return (messageContent.startswith('is fortnite up?') or
-            messageContent.startswith('is fortnite up ?') or
-            messageContent.startswith('is fortnite up') or
-            messageContent.startswith('are fortnite servers up?') or
-            messageContent.startswith('are fortnite servers up') or
-            messageContent.startswith('are fortnite servers up ?') or
-            messageContent.startswith('fortnite up?') or
-            messageContent.startswith('fortnite up ?') or
-            messageContent.startswith('fortnite up') or
-            messageContent.startswith('are servers up') or
-            messageContent.startswith('are servers up?') or
-            messageContent.startswith('are servers up ?'))
+# helpers           
+def getArgs(words):
+    mode = 'no mode specified' # initial assumption
+    # determine specified parameters
+    if isMode(words[1]):
+        if len(words) == 2:
+            print('no username provided', 'line:', lineno())
+            return False
+        mode = words[1]
+        username = words[2]
+    else:
+        username = words[1]
+        if len(words) >= 3 and isMode(words[2]):
+            mode = words[2]
+    return [mode, username]
+    
+
+def isMode(word):
+    return (word == 'all' or word == 'solo' or word == 'duo' or word == 'squad')
+
+
+def lineno():
+    """Returns the current line number in our program."""
+    return inspect.currentframe().f_back.f_lineno
+
+
+# TODO
+def initializeFortnite():
+    fortnite = Fortnite(fortnite_token=fortniteToken,
+                                launcher_token=launcherToken,
+                                password=fortnitePassword, email=fortniteEmail)
+    return fortnite
+
 
 def getCommandResponse(mode, stats, message, userID, username, stat):
+    """handler for static commands"""
     # if no mode was specified, showing data for all modes...
     if mode == 'no mode specified':
         # prepare data
@@ -383,33 +445,6 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
                         str(round(data, decimalsShown))+" "+mode+" "+stat)
     return responseMessage
 
-def getArgs(words):
-    mode = 'no mode specified' # initial assumption
-        # determine specified parameters
-    if isMode(words[1]):
-        if len(words) == 2:
-            print('no username provided', 'line:', lineno())
-            return False
-        mode = words[1]
-        username = words[2]
-    else:
-        username = words[1]
-        if len(words) >= 3 and isMode(words[2]):
-            mode = words[2]
-    return [mode, username]
-    
-def isMode(word):
-    return (word == 'all' or word == 'solo' or word == 'duo' or word == 'squad')
 
-def lineno():
-    """Returns the current line number in our program."""
-    return inspect.currentframe().f_back.f_lineno
-
-# TODO
-def initializeFortnite():
-    fortnite = Fortnite(fortnite_token=fortniteToken,
-                                launcher_token=launcherToken,
-                                password=fortnitePassword, email=fortniteEmail)
-    return fortnite
 
 client.run(discordBotToken)
