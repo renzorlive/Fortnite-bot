@@ -15,8 +15,9 @@ Donations: https://www.paypal.me/fsil
 
 **!server; !servers; !status (displays the status of fortnite servers)**
 
-**you can ask the bot about the servers status somewhat naturally as so: is fortnite up ?; are fortnite servers up ?; fortnite up ?; are servers up ?; not case sensitive**
+**The bot has natural language analysis capabilities, right now limited but in development; e.g. "hey Mike, do you wanna play fortnite ?"; The bot will then respond with the servers status e.g. "servers are up by the way"**
 
+# IMPORTANT: Your conversations or data are not collected in any way.
 
 # Changelog 
 **10-may-18**
