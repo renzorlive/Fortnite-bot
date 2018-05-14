@@ -6,11 +6,12 @@ import random
 import inspect
 import sys
 import os
+import time
 
 from analyzer import Analyzer
 
 
-# constants
+# CONSTANTS
 botID = '443945180966682634' # bot ID on discord, used to prevent infinite topic loop
 # responses for explicit !server or !status commands
 serverStatusUpMessage = "Servers are UP"
@@ -42,17 +43,15 @@ fortniteServerStatusRelatedWords = os.path.join(sys.path[0], "fortnite-servers-r
 # list of words non-related to the topic: fortnite
 fortniteServerStatusNonRelatedWords = os.path.join(sys.path[0], "fortnite-servers-non-related.txt")
 
-
-# collect required data for Fortnite class initialization from file settings.txt
+# collect constants required for Fortnite class initialization from file settings.txt
 with open("settings.txt", encoding="utf-8") as file:
     dataLines = [line.strip() for line in file]
-# prepare required data for setup
 fortniteToken = dataLines[0]
 launcherToken = dataLines[1]
 fortnitePassword = dataLines[2]
 fortniteEmail = dataLines[3]
 discordBotToken = dataLines[4]
-# initial initialization of fortnite class
+# global initial initialization of fortnite class
 try:
     fortnite = Fortnite(fortnite_token=fortniteToken,
                         launcher_token=launcherToken,
@@ -60,35 +59,46 @@ try:
 except:
     print(errorInitializingFortnite)
 
-
 # discord bot setup
 Client = discord.Client()
 client = commands.Bot(command_prefix = "`")
+
+# amount of time in seconds between reinitializations of the fortnite class in order to refresh the token
+tokenRefreshTime = 900 # TODO find the most efficient time
+
+# GLOBAL VARIABLES
+# keeps track of time since refresh
+timeSinceLastRefresh = time.time()
+timeOfMessage = time.time()
+
 
 # on start...
 @client.event
 async def on_ready():
     print("Fortnite Bot is ready")
 
-# on discord message...
+
+# on discord message event handler...
 @client.event
 async def on_message(message):
+    # prepare required data
     userID = message.author.id # discord ID of whoever wrote the message
     words = message.content.split(" ") # list of words in discord message
     mentionPrefix = "<@" + userID + "> "
     
-    # reinitializing class to prevent token expiration TODO maybe find a better way like time driven
-    fortnite = Fortnite(fortnite_token = fortniteToken, launcher_token=launcherToken,
-                                         password=fortnitePassword, email=fortniteEmail)
-    
+    # refresh token every tokenRefreshTime seconds
+    global fortnite
+    global timeOfMessage
+    timeOfMessage = time.time()
+    fortnite = refreshToken()
     
     #  fortnite kills command handler...
-    if message.content.startswith('!kills'):
-        # if no parameters specified... display error
+    if message.content.lower().startswith('!kills'):
+        # if no parameters specified...
         if len(words) == 1:
-            print(errorSpecifyUsername, 'line:', lineno())
-            await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
-            return
+            print(errorSpecifyUsername, 'line:', lineno()) # display error in console
+            await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername) # inform author
+            return # stop
     
         # determine mode and username
         args = getArgs(words) # arguments passed in the message
@@ -123,7 +133,7 @@ async def on_message(message):
     
     
     # fortnite wins command handler...
-    elif message.content.startswith('!wins'):
+    elif message.content.lower().startswith('!wins'):
         # if no parameters specified... error
         if len(words) == 1:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -160,7 +170,7 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
 
     # fortnite wins command handler...
-    elif message.content.startswith('!matches'):
+    elif message.content.lower().startswith('!matches'):
         # if no parameters specified... error
         if len(words) == 1:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -198,7 +208,7 @@ async def on_message(message):
 
 
     # fortnite winrate command handler...
-    elif message.content.startswith('!winrate'):
+    elif message.content.lower().startswith('!winrate'):
         # if no parameters specified... error
         if len(words) == 1:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -235,7 +245,7 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
         
     # fortnite kpm command handler...
-    elif message.content.startswith('!kpm'):
+    elif message.content.lower().startswith('!kpm'):
         # if no parameters specified... error
         if len(words) == 1:
             print(errorSpecifyUsername, 'line:', lineno())
@@ -272,7 +282,7 @@ async def on_message(message):
         await client.send_message(message.channel, responseMessage)
 
     # fortnite server status command handler...
-    elif (message.content.startswith('!server') or message.content.startswith('!servers')
+    elif (message.content.lower().startswith('!server') or message.content.startswith('!servers')
     or message.content.startswith('!status')):
         status = fortnite.server_status()
         if status:
@@ -295,7 +305,7 @@ async def on_message(message):
 
 
 
-# natural language analyses
+# natural language analyzers
 def isTopicFortnite(message, mentionPrefix):
     """
     message: object; mentionPrefix: string
@@ -318,7 +328,28 @@ def isTopicFortnite(message, mentionPrefix):
 
 
 
-# helpers           
+# helpers
+def refreshToken():
+    global timeSinceLastRefresh
+    global timeOfMessage
+    global fortnite
+    # change in time since the last refresh until now
+    dt = timeOfMessage - timeSinceLastRefresh
+    # if defined time between refreshes is exceeeded, refresh token and reset time
+    if dt >= tokenRefreshTime:
+        timeSinceLastRefresh = timeOfMessage
+        return initializeFortnite()
+    return fortnite
+
+
+def initializeFortnite():
+    # initialize the Fortnite class, if it already exists, it refreshes the token
+    fortnite = Fortnite(fortnite_token=fortniteToken,
+                                launcher_token=launcherToken,
+                                password=fortnitePassword, email=fortniteEmail)
+    return fortnite
+
+    
 def getArgs(words):
     mode = 'no mode specified' # initial assumption
     # determine specified parameters
@@ -342,14 +373,6 @@ def isMode(word):
 def lineno():
     """Returns the current line number in our program."""
     return inspect.currentframe().f_back.f_lineno
-
-
-# TODO
-def initializeFortnite():
-    fortnite = Fortnite(fortnite_token=fortniteToken,
-                                launcher_token=launcherToken,
-                                password=fortnitePassword, email=fortniteEmail)
-    return fortnite
 
 
 def getCommandResponse(mode, stats, message, userID, username, stat):

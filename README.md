@@ -42,3 +42,7 @@ Donations: https://www.paypal.me/fsil
 - Cleaned up code, improved natural language analysis
 - Improved natural language scoring
 - Added more data for natural language analysis
+
+**14-may-18**
+- Fixed bug where uppercase commands wouldn't work
+- Fixed bug where token would expire, changed token refreshing on time interval, set time interval 900 s or 15 min

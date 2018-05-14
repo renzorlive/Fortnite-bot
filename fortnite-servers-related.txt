@@ -42,3 +42,5 @@ serv
 serv?
 joaca
 joaca?
+cum
+cum?
