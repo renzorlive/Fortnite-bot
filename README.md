@@ -5,7 +5,7 @@
 Donations: https://www.paypal.me/fsil
 
 # Available commands:
-**!kills mode username** (mode is one of: all, solo, duo or squads; username: your fortnite username)
+**!kills mode username** (mode is one of: all, solo, duo or squad; username: your fortnite username)
 
 **!kills username mode** (alternative way)
 
