@@ -119,13 +119,6 @@ async def on_message(message):
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
         
-        # if no mode was not specified, showing data for all modes...
-        if mode == 'no mode specified':
-            responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kills')
-            # send response to discord
-            await client.send_message(message.channel, responseMessage)
-            return # stop
-        
         # if mode was specified... prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kills')
         # send response to discord
@@ -157,12 +150,6 @@ async def on_message(message):
             print(errorNotFound, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
-        # if no mode was specified, showing data for all modes...
-        if mode == 'no mode specified':
-            responseMessage = getCommandResponse(mode, stats, message, userID, username, 'wins')
-            # send response to discord
-            await client.send_message(message.channel, responseMessage)
-            return # stop
 
         # prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'wins')
@@ -194,12 +181,6 @@ async def on_message(message):
             print(errorNotFound, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
-        # if no mode was specified, showing data for all modes...
-        if mode == 'no mode specified':
-            responseMessage = getCommandResponse(mode, stats, message, userID, username, 'matches')
-            # send response to discord
-            await client.send_message(message.channel, responseMessage)
-            return # stop
 
         # prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'matches')
@@ -232,12 +213,6 @@ async def on_message(message):
             print(errorNotFound, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
-        # if no mode was specified, showing data for all modes...
-        if mode == 'no mode specified':
-            responseMessage = getCommandResponse(mode, stats, message, userID, username, 'winrate')
-            # send response to discord
-            await client.send_message(message.channel, responseMessage)
-            return # stop
 
         # prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'winrate')
@@ -269,15 +244,40 @@ async def on_message(message):
             print(errorNotFound, 'line:', lineno())
             await client.send_message(message.channel, mentionPrefix + errorNotFound)
             return
-        # if no mode was specified, showing data for all modes...
-        if mode == 'no mode specified':
-            responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kpm')
-            # send response to discord
-            await client.send_message(message.channel, responseMessage)
-            return # stop
 
         # prepare response message
         responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kpm')
+        # send response to discord
+        await client.send_message(message.channel, responseMessage)
+
+    # fortnite kpd command handler...
+    elif message.content.lower().startswith('!kpd'):
+        # if no parameters specified... error
+        if len(words) == 1:
+            print(errorSpecifyUsername, 'line:', lineno())
+            await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
+            return
+        
+        # determine mode and username
+        args = getArgs(words)
+        if args == False:
+            print(errorSpecifyUsername, 'line:', lineno())
+            await client.send_message(message.channel, mentionPrefix + errorSpecifyUsername)
+            return
+        else:
+            mode = args[0]
+            username = args[1]
+
+        # try to get response from Fortnite API for username
+        try:
+            stats = fortnite.battle_royale_stats(username=username, platform=Platform.pc)
+        except:
+            print(errorNotFound, 'line:', lineno())
+            await client.send_message(message.channel, mentionPrefix + errorNotFound)
+            return
+
+        # prepare response message
+        responseMessage = getCommandResponse(mode, stats, message, userID, username, 'kpd')
         # send response to discord
         await client.send_message(message.channel, responseMessage)
 
@@ -405,6 +405,11 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             datasolo = stats.solo.kills / stats.solo.matches
             dataduo = stats.duo.kills / stats.duo.matches
             datasquad = stats.squad.kills / stats.squad.matches
+        elif stat == 'kpd':
+            dataall = stats.all.kills / (stats.all.matches - stats.all.wins)
+            datasolo = stats.solo.kills / (stats.solo.matches - stats.solo.wins)
+            dataduo = stats.duo.kills / (stats.duo.matches - stats.duo.wins)
+            datasquad = stats.squad.kills / (stats.squad.matches - stats.squad.wins)
             
         # prepare response for when mode is not specified
         responseMessage = ("<@"+userID+"> "+username+": "+
@@ -426,6 +431,8 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             data = stats.all.wins / stats.all.matches * 100
         elif stat == 'kpm':
             data = stats.all.kills / stats.all.matches
+        elif stat == 'kpd':
+            data = stats.all.kills / (stats.all.matches - stats.all.wins);
             
     elif mode == "solo":
         if stat == 'kills':
@@ -438,7 +445,9 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             data = stats.solo.wins / stats.solo.matches * 100
         elif stat == 'kpm':
             data = stats.solo.kills / stats.solo.matches
-  
+        elif stat == 'kpd':
+            data = stats.solo.kills / (stats.solo.matches - stats.solo.wins);
+    
     elif mode == 'duo':
         if stat == 'kills':
             data = stats.duo.kills
@@ -450,6 +459,8 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             data = stats.duo.wins / stats.all.matches * 100
         elif stat == 'kpm':
             data = stats.duo.kills / stats.all.matches
+        elif stat == 'kpd':
+            data = stats.duo.kills / (stats.duo.matches - stats.duo.wins);
     
     elif mode == 'squad':
         if stat == 'kills':
@@ -462,7 +473,9 @@ def getCommandResponse(mode, stats, message, userID, username, stat):
             data = stats.squad.wins / stats.squad.matches * 100
         elif stat == 'kpm':
             data = stats.squad.kills / stats.squad.matches
-            
+        elif stat == 'kpd':
+            data = stats.squad.kills / (stats.squad.matches - stats.squad.wins);    
+        
     # prepare response message for when mode is specified
     responseMessage =  ("<@"+userID+"> "+username+": "+
                         str(round(data, decimalsShown))+" "+mode+" "+stat)

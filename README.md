@@ -11,7 +11,7 @@ Donations: https://www.paypal.me/fsil
 
 **!kills username** (by ommiting the mode, bot shows data from all modes for username)
 
-**same pattern as above works for: kills, wins, matches, winrate, kpm**
+**same pattern as above works for: kills, wins, matches, winrate, kpm, kpd**
 
 **!server; !servers; !status (displays the status of fortnite servers)**
 
@@ -46,3 +46,7 @@ Donations: https://www.paypal.me/fsil
 **14-may-18**
 - Fixed bug where uppercase commands wouldn't work
 - Fixed bug where token would expire, changed token refreshing on time interval, set time interval 900 s or 15 min
+
+**15-may-18**
+- Added !kpd command
+- Removed some redundancy
