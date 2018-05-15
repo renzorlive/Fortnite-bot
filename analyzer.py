@@ -1,29 +1,34 @@
 import nltk
 
 class Analyzer():
-    """Implements sentiment analysis."""
+    """ Topic analyzer"""
+    def __init__(self, related, differentTopic, keywords):
+        """related should be words related to the topic, differentTopic, words that change the topic"""
+        # make empty sets
+        self.related = set()
+        self.differentTopic = set()
+        self.keywords = set()
 
-    def __init__(self, positives, negatives):
-        """Initialize Analyzer."""
-
-        # make 2 empty sets
-        self.positives = set()
-        self.negatives = set()
-
-        # populate positives set
-        with open(positives) as lines:
+        # populate related set
+        with open(related) as lines:
             for line in lines:
                 if not line.startswith(";") and not line.startswith('\n'):
-                    self.positives.add(line.strip())
+                    self.related.add(line.strip())
 
-        # populate negative set
-        with open(negatives) as lines:
+        # populate differentTopic set
+        with open(differentTopic) as lines:
             for line in lines:
                 if not line.startswith(";") and not line.startswith('\n'):
-                    self.negatives.add(line.strip())
+                    self.differentTopic.add(line.strip())
+                    
+        # populate keywords set
+        with open(keywords) as lines:
+            for line in lines:
+                if not line.startswith(";") and not line.startswith('\n'):
+                    self.keywords.add(line.strip())
 
     def analyze(self, text):
-        """Analyze text for sentiment, returning its score."""
+        """Analyze text for a certain topic, returning its score."""
 
         # split text into list of words
         tokenizer = nltk.tokenize.TweetTokenizer()
@@ -36,9 +41,11 @@ class Analyzer():
 
         # for each word in words...
         for word in words:
-            if word in self.positives:
+            if word in self.keywords:
+                score += 2
+            elif word in self.related:
                 score += 1
-            elif word in self.negatives:
-                score -= 2
+            elif word in self.differentTopic:
+                score -= 6
 
         return score

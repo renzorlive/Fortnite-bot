@@ -40,8 +40,10 @@ decimalsShown = 3 # as in the statistics
 
 # list of words related to the topic: fortnite
 fortniteServerStatusRelatedWords = os.path.join(sys.path[0], "fortnite-servers-related.txt")
-# list of words non-related to the topic: fortnite
-fortniteServerStatusNonRelatedWords = os.path.join(sys.path[0], "fortnite-servers-non-related.txt")
+# list of words that change the topic: fortnite
+fortniteServerStatusDifferentTopicWords = os.path.join(sys.path[0], "fortnite-servers-different-topic.txt")
+# List of words that are keywords in determining the topic is: fortnite
+fortniteServerStatusKeywords = os.path.join(sys.path[0], "fortnite-servers-keywords.txt")
 
 # collect constants required for Fortnite class initialization from file settings.txt
 with open("settings.txt", encoding="utf-8") as file:
@@ -317,7 +319,9 @@ def isTopicFortnite(message, mentionPrefix):
         return False
     
     # initialize analyzer
-    analyzer = Analyzer(fortniteServerStatusRelatedWords, fortniteServerStatusNonRelatedWords)
+    analyzer = Analyzer(fortniteServerStatusRelatedWords, 
+                        fortniteServerStatusDifferentTopicWords,
+                        fortniteServerStatusKeywords)
     if not analyzer:
         print('error trying to initialize Analyzer', 'line:', lineno())
         client.send_message(message.channel, mentionPrefix + ' error while trying to initialize Analyzer line: ' + str(lineno()))

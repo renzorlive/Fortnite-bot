@@ -51,3 +51,4 @@ Donations: https://www.paypal.me/fsil
 - Added !kpd command
 - Removed some redundancy
 - Improved natural language analysis
+- Significant improvement to natural language analysis
