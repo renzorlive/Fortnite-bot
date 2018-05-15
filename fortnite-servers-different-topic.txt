@@ -28,8 +28,8 @@ twitch
 twitch?
 twitch-ul
 twitch-ul?
-cryptocurency
-cryptocurency?
+cryptocurrency
+cryptocurrency?
 car
 cars?
 gps
